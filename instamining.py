@@ -11,12 +11,14 @@ import csv
 import time
 
 
-class instamining():
+class instamining:
     def __init__(self, search_hashtag):
         chrome_options = Options()
         chrome_options.add_experimental_option("excludeSwitches", ["enable-logging"])
         chrome_options.add_experimental_option("detach", True)
-        self.browser = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+        self.browser = webdriver.Chrome(
+            service=Service(ChromeDriverManager().install()), options=chrome_options
+        )
         self.search_hashtag = search_hashtag
         self.browser.get(f"https://www.instagram.com/explore/tags/{search_hashtag}")
         self.browser.maximize_window()
@@ -32,12 +34,26 @@ class instamining():
         time.sleep(15)
 
     def scrape(self):
-        WebDriverWait(self.browser, 50).until(EC.presence_of_all_elements_located((By.CLASS_NAME, "_aa9_")))
-        WebDriverWait(self.browser, 50).until(EC.presence_of_all_elements_located((By.CLASS_NAME, "_aaqe")))
-        WebDriverWait(self.browser, 50).until(EC.presence_of_all_elements_located((By.XPATH, "/html/body/div[2]/div/div/div[2]/div/div/div[1]/div/div[3]/div/div/div/div/div[2]/div/article/div/div[2]/div/div/div[2]/section[2]/div/div/span/a/span/span")))
+        WebDriverWait(self.browser, 50).until(
+            EC.presence_of_all_elements_located((By.CLASS_NAME, "_aa9_"))
+        )
+        WebDriverWait(self.browser, 50).until(
+            EC.presence_of_all_elements_located((By.CLASS_NAME, "_aaqe"))
+        )
+        WebDriverWait(self.browser, 50).until(
+            EC.presence_of_all_elements_located(
+                (
+                    By.XPATH,
+                    "/html/body/div[2]/div/div/div[2]/div/div/div[1]/div/div[3]/div/div/div/div/div[2]/div/article/div/div[2]/div/div/div[2]/section[2]/div/div/span/a/span/span",
+                )
+            )
+        )
         hashtags = self.browser.find_elements(By.CLASS_NAME, "_aa9_")
         date = self.browser.find_element(By.CLASS_NAME, "_aaqe")
-        like = self.browser.find_element(By.XPATH, "/html/body/div[2]/div/div/div[2]/div/div/div[1]/div/div[3]/div/div/div/div/div[2]/div/article/div/div[2]/div/div/div[2]/section[2]/div/div/span/a/span/span")
+        like = self.browser.find_element(
+            By.XPATH,
+            "/html/body/div[2]/div/div/div[2]/div/div/div[1]/div/div[3]/div/div/div/div/div[2]/div/article/div/div[2]/div/div/div[2]/section[2]/div/div/span/a/span/span",
+        )
         result = []
         result.append(date.text)
         result.append(int(like.text))
@@ -45,9 +61,11 @@ class instamining():
             result.append(hashtag.text[1:])
         time.sleep(1)
         return result
-    
+
     def check_next(self):
-        WebDriverWait(self.browser, 50).until(EC.presence_of_all_elements_located((By.CLASS_NAME, "x1lliihq")))
+        WebDriverWait(self.browser, 50).until(
+            EC.presence_of_all_elements_located((By.CLASS_NAME, "x1lliihq"))
+        )
         check_list = self.browser.find_elements(By.CLASS_NAME, "x1lliihq")
         result = False
         for check in check_list:
@@ -55,11 +73,15 @@ class instamining():
                 result = True
         return result
 
-
     def start(self):
         self.login()
-        WebDriverWait(self.browser, 20).until(EC.presence_of_all_elements_located((By.CLASS_NAME, "_aagu")))
-        self.browser.find_element(By.XPATH, "/html/body/div[2]/div/div/div[1]/div/div/div/div[1]/div[1]/div[2]/section/main/article/div[1]/div/div/div[1]/div[1]/a/div").click()
+        WebDriverWait(self.browser, 20).until(
+            EC.presence_of_all_elements_located((By.CLASS_NAME, "_aagu"))
+        )
+        self.browser.find_element(
+            By.XPATH,
+            "/html/body/div[2]/div/div/div[1]/div/div/div/div[1]/div[1]/div[2]/section/main/article/div[1]/div/div/div[1]/div[1]/a/div",
+        ).click()
         repeat = True
         results = []
 
@@ -75,4 +97,5 @@ class instamining():
         for result in results:
             writer.writerow(result)
 
-instamining("문화재보존과학회").start()
+
+instamining("nomadcoder").start()
